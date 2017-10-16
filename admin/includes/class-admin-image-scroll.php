@@ -31,8 +31,36 @@ class Image_Scroll_Admin {
 	 * @return void
 	 */
 	public function __construct() {
+
 		// Add tinymce controls.
 		add_action( 'init', array( $this, 'setup_tinymce_plugin' ) );
+
+		// Add scripts.
+		add_action( 'admin_enqueue_scripts', array( $this, 'register_public_assets' ), 1 );
+	}
+
+	/**
+	 * Add scripts.
+	 *
+	 * @since 1.0.0
+	 * @return void
+	 */
+	public function register_public_assets() {
+		$utility = new Cherry_Media_Utilit();
+		$sizes = array();
+
+		if ( $utility->get_image_sizes() ) {
+			foreach ( $utility->get_image_sizes() as $key => $value ) {
+				array_push( $sizes, $key );
+			}
+		}
+
+		wp_register_script( 'image-scroll-admin-js', IMAGE_SCROLL_URL . 'admin/assets/js/admin.js', false, '1.0.0' );
+		wp_enqueue_script( 'image-scroll-admin-js' );
+
+		wp_localize_script( 'image-scroll-admin-js', 'imageScrollData', array(
+			'image_sizes' => $sizes
+		) );
 	}
 
 	/**
@@ -57,9 +85,7 @@ class Image_Scroll_Admin {
 
 	public function add_tinymce_plugin( $plugin_array ) {
 
-		$base = new Image_Scroll_Plugin();
-
-		$plugin_array['image_scroll'] = $base->plugin_url( 'admin/assets/js/tinymce-image-scroll.js' );
+		$plugin_array['image_scroll'] = IMAGE_SCROLL_URL . 'admin/assets/js/tinymce-image-scroll.js';
 
 		return $plugin_array;
 	}

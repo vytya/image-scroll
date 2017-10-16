@@ -16,6 +16,12 @@ if ( ! defined ( 'WPINC' ) ) {
 	die;
 }
 
+define( 'IMAGE_SCROLL_VERSION', '1.6.5' );
+define( 'IMAGE_SCROLL__FILE__', __FILE__ );
+define( 'IMAGE_SCROLL_PLUGIN_BASE', plugin_basename( IMAGE_SCROLL__FILE__ ) );
+define( 'IMAGE_SCROLL_URL', plugins_url( '/', IMAGE_SCROLL__FILE__ ) );
+define( 'IMAGE_SCROLL_PATH', plugin_dir_path( IMAGE_SCROLL__FILE__ ) );
+
 if ( ! class_exists( 'Image_Scroll_Plugin' ) ) {
 	/**
 	 * Sets up and initializes the Image Scroll plugin.
@@ -31,24 +37,6 @@ if ( ! class_exists( 'Image_Scroll_Plugin' ) ) {
 		 * @var   object
 		 */
 		private static $instance = null;
-
-		/**
-		 * Plugin folder URL.
-		 *
-		 * @since  1.0.0
-		 * @access public
-		 * @var    string
-		 */
-		public $plugin_url = '';
-
-		/**
-		 * Plugin folder path.
-		 *
-		 * @since  1.0.0
-		 * @access public
-		 * @var    string
-		 */
-		public $plugin_dir = '';
 
 		/**
 		 * Plugin version.
@@ -75,56 +63,15 @@ if ( ! class_exists( 'Image_Scroll_Plugin' ) ) {
 			// Load the admin files.
 			add_action( 'after_setup_theme', array( $this, 'admin' ), 3 );
 
+			// Register image sizes.
+			add_action( 'after_setup_theme', array( $this, 'register_image_sizes' ), 4 );
+
 			// Register a public javascripts and stylesheets.
 			add_action( 'wp_enqueue_scripts', array( $this, 'register_public_assets' ), 1 );
 
 			// Register activation and deactivation hook.
 			register_activation_hook( __FILE__, array( $this, 'activation' ) );
 			register_deactivation_hook( __FILE__, array( $this, 'deactivation' ) );
-		}
-
-		/**
-		 * Get plugin URL (or some plugin dir/file URL)
-		 *
-		 * @since  1.0.0
-		 * @param  string $path dir or file inside plugin dir.
-		 * @return string
-		 */
-		public function plugin_url( $path = null ) {
-
-			if ( ! $this->plugin_url ) {
-				$this->plugin_url = plugin_dir_url( __FILE__ );
-			}
-
-			if ( null !== $path ) {
-				$path = wp_normalize_path( $path );
-
-				return $this->plugin_url . ltrim( $path, '/' );
-			}
-
-			return $this->plugin_url;
-		}
-
-		/**
-		 * Get plugin dir path (or some plugin dir/file path)
-		 *
-		 * @since  1.0.0
-		 * @param  string $path dir or file inside plugin dir.
-		 * @return string
-		 */
-		public function plugin_dir( $path = null ) {
-
-			if ( ! $this->plugin_dir ) {
-				$this->plugin_dir = plugin_dir_path( __FILE__ );
-			}
-
-			if ( null !== $path ) {
-				$path = wp_normalize_path( $path );
-
-				return $this->plugin_dir . $path;
-			}
-
-			return $this->plugin_dir;
 		}
 
 		/**
@@ -137,24 +84,35 @@ if ( ! class_exists( 'Image_Scroll_Plugin' ) ) {
 		}
 
 		/**
-		 * Loads files from the '/includes' folder.
-		 *
-		 * @since 1.0.0
-		 */
-		public function includes() {
-			require_once $this->plugin_dir( 'public/includes/class-media-utilities.php' );
-			require_once $this->plugin_dir( 'public/includes/class-image-scroll-shortcode.php' );
-		}
-
-		/**
 		 * Loads admin files.
 		 *
 		 * @since 1.0.0
 		 */
 		public function admin() {
+			require_once IMAGE_SCROLL_PATH . 'public/includes/class-media-utilities.php';
+
 			if ( is_admin() ) {
-				require_once $this->plugin_dir( 'admin/includes/class-admin-image-scroll.php' );
+				require_once IMAGE_SCROLL_PATH . 'admin/includes/class-admin-image-scroll.php';
 			}
+		}
+
+		/**
+		 * Register image sizes.
+		 *
+		 * @since 1.0.0
+		 */
+		public function register_image_sizes() {
+
+			add_image_size( 'image-scroll-thumb', 550, 630, true );
+		}
+
+		/**
+		 * Loads files from the '/includes' folder.
+		 *
+		 * @since 1.0.0
+		 */
+		public function includes() {
+			require_once IMAGE_SCROLL_PATH . 'public/includes/class-image-scroll-shortcode.php';
 		}
 
 		/**
@@ -163,7 +121,13 @@ if ( ! class_exists( 'Image_Scroll_Plugin' ) ) {
 		 * @since 1.0.0
 		 */
 		public function register_public_assets() {
-			wp_register_style( 'image-scroll-public', $this->plugin_dir( 'public/assets/css/public.css' ), array(), $this->$version );
+			wp_register_script( 'swiper', IMAGE_SCROLL_URL . 'public/assets/js/min/swiper.jquery.min.js', array( 'jquery' ), '4.0.1', true );
+			wp_register_script( 'magnific-popup', IMAGE_SCROLL_URL . 'public/assets/js/min/jquery.magnific-popup.min.js', array( 'jquery' ), '1.1.0', true );
+			wp_register_script( 'image-scroll-scripts-public', IMAGE_SCROLL_URL . 'public/assets/js/public.js', array( 'jquery', 'swiper', 'magnific-popup' ), IMAGE_SCROLL_VERSION, true );
+
+			wp_register_style( 'swiper', IMAGE_SCROLL_URL . 'public/assets/css/swiper.min.css', array(), '3.3.0' );
+			wp_register_style( 'magnific-popup', IMAGE_SCROLL_URL . 'public/assets/css/magnific-popup.min.css', array(), '1.1.0' );
+			wp_register_style( 'image-scroll-public', IMAGE_SCROLL_URL . 'public/assets/css/public.css', array(), IMAGE_SCROLL_VERSION );
 		}
 
 		/**

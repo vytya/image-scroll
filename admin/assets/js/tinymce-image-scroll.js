@@ -1,4 +1,23 @@
 (function() {
+	var getImageSizes = function() {
+		var imageSizes = [];
+
+		if (imageScrollData.image_sizes) {
+			imageScrollData.image_sizes.forEach(function(it){
+				var d = {};
+
+				d = {
+					'text': it,
+					'value': it
+				};
+
+				imageSizes.push(d);
+			});
+		}
+
+		return imageSizes;
+	}
+
 	tinymce.PluginManager.add( 'image_scroll', function( editor, url ) {
 		editor.addButton( 'image_scroll', {
 			title: "Image Scroll shortcode",
@@ -63,10 +82,18 @@
 						label: 'Images',
 						html: '<div style="width: 200px; height: 200px; display: flex; align-items: center;">Choose images first</div>',
 						id: 'imageView'
-					},],
+					},
+					{
+						type: 'listbox',
+						name: 'size',
+						label: 'Size',
+						values: getImageSizes(),
+						minWidth: 350
+					},
+					],
 					onsubmit: function(e) {
 						editor.insertContent(
-							'[imagescroll imageids="' + e.data.id + '"][/imagescroll]'
+							'[imagescroll imageids="' + e.data.id + '" size="' + e.data.size + '"][/imagescroll]'
 						);
 					}
 				})

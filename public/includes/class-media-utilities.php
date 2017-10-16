@@ -46,6 +46,38 @@ if ( ! class_exists( 'Cherry_Media_Utilit' ) ) {
 		}
 
 		/**
+		 * Get size information for all currently-registered image sizes.
+		 *
+		 * @global $_wp_additional_image_sizes
+		 * @uses   get_intermediate_image_sizes()
+		 * @link   https://codex.wordpress.org/Function_Reference/get_intermediate_image_sizes
+		 * @since  1.1.6
+		 * @return array $sizes Data for all currently-registered image sizes.
+		 */
+		function get_image_sizes() {
+			global $_wp_additional_image_sizes;
+
+			$sizes = array();
+
+			foreach ( get_intermediate_image_sizes() as $_size ) {
+				if ( in_array( $_size, array( 'thumbnail', 'medium', 'medium_large', 'large' ) ) ) {
+					$sizes[ $_size ]['width']  = get_option( "{$_size}_size_w" );
+					$sizes[ $_size ]['height'] = get_option( "{$_size}_size_h" );
+					$sizes[ $_size ]['crop']   = (bool) get_option( "{$_size}_crop" );
+
+				} elseif ( isset( $_wp_additional_image_sizes[ $_size ] ) ) {
+					$sizes[ $_size ] = array(
+						'width'  => $_wp_additional_image_sizes[ $_size ]['width'],
+						'height' => $_wp_additional_image_sizes[ $_size ]['height'],
+						'crop'   => $_wp_additional_image_sizes[ $_size ]['crop'],
+					);
+				}
+			}
+
+			return $sizes;
+		}
+
+		/**
 		 * Get array image size
 		 *
 		 * @since  1.0.0
@@ -99,7 +131,6 @@ if ( ! class_exists( 'Cherry_Media_Utilit' ) ) {
 			$default_args = array(
 				'visible'                => true,
 				'size'                   => apply_filters( 'cherry_normal_image_size', 'post-thumbnail' ),
-				'mobile_size'            => apply_filters( 'cherry_mobile_image_size', 'post-thumbnail' ),
 				'html'                   => '<a href="%1$s" %2$s ><img src="%3$s" alt="%4$s" %5$s ></a>',
 				'class'                  => 'wp-image',
 				'placeholder'            => true,
@@ -118,7 +149,7 @@ if ( ! class_exists( 'Cherry_Media_Utilit' ) ) {
 				$intermediate_image_sizes   = get_intermediate_image_sizes();
 				$intermediate_image_sizes[] = 'full';
 
-				$size = wp_is_mobile() ? $args['mobile_size'] : $args['size'];
+				$size = $args['size'];
 				$size = in_array( $size, $intermediate_image_sizes ) ? $size : 'post-thumbnail';
 
 				// Placeholder defaults attr.

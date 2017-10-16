@@ -93,11 +93,20 @@ class Image_Scroll_Shortcode {
 	 */
 	public function do_shortcode( $atts, $content = null, $shortcode = 'imagescroll' ) {
 
-		$media_utilities = new Cherry_Media_Utilit();
+		wp_enqueue_script( 'swiper' );
+		wp_enqueue_script( 'magnific-popup' );
+		wp_enqueue_script( 'image-scroll-scripts-public' );
+
+		wp_enqueue_style( 'swiper' );
+		wp_enqueue_style( 'magnific-popup' );
+		wp_enqueue_style( 'image-scroll-public' );
+
+		$utility = new Cherry_Media_Utilit();
 
 		// Set up the default arguments.
 		$defaults = array(
 			'imageids' => '',
+			'size'     => 'image-scroll-thumb'
 		);
 
 		/**
@@ -105,45 +114,62 @@ class Image_Scroll_Shortcode {
 		 *
 		 * @link http://codex.wordpress.org/Function_Reference/shortcode_atts
 		 */
-		$atts = shortcode_atts( $defaults, $atts, $shortcode );
+		$atts   = shortcode_atts( $defaults, $atts, $shortcode );
+		$size   = $utility->get_thumbnail_size_array( $atts['size'] );
+		$width  = $size['width'];
+		$height = $size['height'];
 
-		if ( $atts['images'] !== '' ) {
-			if ( strpos( $atts['images'], ',' ) !== false ) {
-				$images = explode( ',', str_replace( ' ', '', $atts['images'] ) );
+		$css_style = 'style="max-width: ' . $width . 'px; max-height: ' . $height . 'px;"';
+
+		if ( $atts['imageids'] !== '' ) {
+
+			if ( strpos( $atts['imageids'], ',' ) !== false ) {
+
+				$images = explode( ',', str_replace( ' ', '', $atts['imageids'] ) );
 				$image  = array();
 
-				foreach ($images as $key => $value) {
-					$image_html = $utility->media->get_image( array(
-						'size'        => 'johnnygo-thumb-m',
-						'mobile_size' => 'johnnygo-thumb-m',
-						'html'        => '<div class="swiper-slide"><img src="%3$s"></div>',
+				foreach ( $images as $key => $value ) {
+					$full_image_src = $utility->get_image( array(
+						'size'        => 'full',
+						'html'        => '<div class="swiper-slide"><a href="%3$s" class="image-scroll-popup">',
 						'echo'        => false,
 					), 'attachment', $value );
 
-					array_push($image, $image_html);
+					$image_html = $utility->get_image( array(
+						'size'        => $atts['size'],
+						'html'        => '<img src="%3$s"></a></div>',
+						'echo'        => false,
+					), 'attachment', $value );
+
+
+					array_push( $image, $full_image_src . $image_html );
 				}
-				$image = implode('', $image);
+
+				$image = implode( '', $image );
+
 			} else {
-				$image = $utility->media->get_image( array(
-					'size'        => 'johnnygo-thumb-m',
+
+				$image = $utility->get_image( array(
+					'size'        => $atts['size'],
 					'html'        => '<img src="%3$s">',
 					'echo'        => false,
 				), 'attachment', $atts['images'] );
 			}
 		}
 
-	return sprintf(
-		'<div class="some-wrap"><div class="shortcode swiper-container" data-uniq-id="%2$s">
-			<div class="swiper-wrapper">
-				%1$s
-			</div>
-			<div class="swiper-scrollbar"></div>
-		</div></div>',
-		$image,
-		rand(5, 15)
-	);
-
-		return $before . $this->data->the_team( $data_args ) . $after;
+		return sprintf(
+			'<div class="image-scroll-wrap" >
+				<div class="image-scroll swiper-container" data-uniq-id="%2$s" %3$s>
+					<div class="swiper-wrapper">
+						%1$s
+					</div>
+					<div class="swiper-scrollbar">
+				</div>
+			</div></div>',
+			$image,
+			rand(),
+			$css_style
+		);
 	}
 
 	/**
