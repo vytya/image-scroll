@@ -118,8 +118,10 @@ class Image_Scroll_Shortcode {
 		$size   = $utility->get_thumbnail_size_array( $atts['size'] );
 		$width  = $size['width'];
 		$height = $size['height'];
+		$aspect_ratio = $height / $height;
 
 		$css_style = 'style="max-width: ' . $width . 'px; max-height: ' . $height . 'px;"';
+		$some = 'style="padding-bottom: 100%; height: 0;"';
 
 		if ( $atts['imageids'] !== '' ) {
 
@@ -137,7 +139,7 @@ class Image_Scroll_Shortcode {
 
 					$image_html = $utility->get_image( array(
 						'size'        => $atts['size'],
-						'html'        => '<img src="%3$s"></a></div>',
+						'html'        => '<img src="%3$s" ></a></div>',
 						'echo'        => false,
 					), 'attachment', $value );
 
@@ -158,7 +160,7 @@ class Image_Scroll_Shortcode {
 		}
 
 		return sprintf(
-			'<div class="image-scroll-wrap" >
+			'<div class="image-scroll-wrap">
 				<div class="image-scroll swiper-container" data-uniq-id="%2$s" %3$s>
 					<div class="swiper-wrapper">
 						%1$s
