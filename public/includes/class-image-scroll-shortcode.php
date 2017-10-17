@@ -101,12 +101,18 @@ class Image_Scroll_Shortcode {
 		wp_enqueue_style( 'magnific-popup' );
 		wp_enqueue_style( 'image-scroll-public' );
 
+		wp_localize_script( 'image-scroll-scripts-public', 'imageScrollData', array(
+			'loading_image'    => esc_html__( 'Loading image #%curr%...', 'image-scroll' ),
+			'not_loaded_image' => esc_html__( '<a href="%url%">The image #%curr%</a> could not be loaded.', 'image-scroll' ),
+		) );
+
 		$utility = new Cherry_Media_Utilit();
 
 		// Set up the default arguments.
 		$defaults = array(
 			'imageids' => '',
-			'size'     => 'image-scroll-thumb'
+			'size'     => 'image-scroll-thumb',
+			'lightbox' => 'true'
 		);
 
 		/**
@@ -118,10 +124,8 @@ class Image_Scroll_Shortcode {
 		$size   = $utility->get_thumbnail_size_array( $atts['size'] );
 		$width  = $size['width'];
 		$height = $size['height'];
-		$aspect_ratio = $height / $height;
 
 		$css_style = 'style="max-width: ' . $width . 'px; max-height: ' . $height . 'px;"';
-		$some = 'style="padding-bottom: 100%; height: 0;"';
 
 		if ( $atts['imageids'] !== '' ) {
 
@@ -133,18 +137,28 @@ class Image_Scroll_Shortcode {
 				foreach ( $images as $key => $value ) {
 					$full_image_src = $utility->get_image( array(
 						'size'        => 'full',
-						'html'        => '<div class="swiper-slide"><a href="%3$s" class="image-scroll-popup">',
+						'html'        => '%3$s',
 						'echo'        => false,
 					), 'attachment', $value );
 
-					$image_html = $utility->get_image( array(
+					$display_image = $utility->get_image( array(
 						'size'        => $atts['size'],
-						'html'        => '<img src="%3$s" ></a></div>',
+						'html'        => '<img src="%3$s">',
 						'echo'        => false,
 					), 'attachment', $value );
 
+					$format_lightbox   = '<div class="swiper-slide"><a href="%1$s" class="image-scroll-popup">%2$s</a></div>';
+					$format_nolightbox = '<div class="swiper-slide">%2$s</div>';
 
-					array_push( $image, $full_image_src . $image_html );
+					$format = ( $atts['lightbox'] == 'true' ) ? $format_lightbox : $format_nolightbox;
+
+					$html = sprintf(
+						$format,
+						$full_image_src,
+						$display_image
+					);
+
+					array_push( $image, $html );
 				}
 
 				$image = implode( '', $image );

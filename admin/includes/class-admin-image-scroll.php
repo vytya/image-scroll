@@ -59,7 +59,18 @@ class Image_Scroll_Admin {
 		wp_enqueue_script( 'image-scroll-admin-js' );
 
 		wp_localize_script( 'image-scroll-admin-js', 'imageScrollData', array(
-			'image_sizes' => $sizes
+			'image_sizes'         => $sizes,
+			'shorcode_title'      => esc_html__( 'Image Scroll shortcode', 'image-scroll' ),
+			'window_title'        => esc_html__( 'Insert Image Scroll', 'image-scroll' ),
+			'choose_images_title' => esc_html__( 'Choose images', 'image-scroll' ),
+			'choose_image_title'  => esc_html__( 'Choose image', 'image-scroll' ),
+			'add_image_title'     => esc_html__( 'Add image', 'image-scroll' ),
+			'image_title'         => esc_html__( 'Image', 'image-scroll' ),
+			'images_title'        => esc_html__( 'Images', 'image-scroll' ),
+			'size_title'          => esc_html__( 'Size', 'image-scroll' ),
+			'enable_lightbox'     => esc_html__( 'Enable lightbox?', 'image-scroll' ),
+			'yes_title'           => esc_html__( 'Yes', 'image-scroll' ),
+			'no_title'            => esc_html__( 'No', 'image-scroll' )
 		) );
 	}
 

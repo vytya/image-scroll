@@ -8,7 +8,6 @@
 				var images = jQuery('.image-scroll img');
 
 				for (var i = 0; i < images.length; i++) {
-					console.log(images[i].height);
 					if ( maxHeightImage < images[i].height ) {
 						maxHeightImage = images[i].height;
 					}
@@ -53,20 +52,23 @@
 					effect: 'fade',
 				} );
 
+				var loadingImage = (imageScrollData.loading_image) ? imageScrollData.loading_image : 'Loading image #%curr%...',
+					notLoadedImage = (imageScrollData.not_loaded_image) ? imageScrollData.not_loaded_image : '<a href="%url%">The image #%curr%</a> could not be loaded.';
+
 				jQuery( this ).magnificPopup({
 					delegate: 'a',
 					type: 'image',
-					tLoading: 'Loading image #%curr%...',
+					tLoading: loadingImage,
 					mainClass: 'mfp-img-mobile',
 					gallery: {
 						enabled: true,
 						navigateByImgClick: true,
-						preload: [0,1] // Will preload 0 - before current, and 1 after the current image
+						preload: [0,1]
 					},
 					image: {
-						tError: '<a href="%url%">The image #%curr%</a> could not be loaded.',
+						tError: notLoadedImage,
 						titleSrc: function(item) {
-							return item.el.attr('title') + '<small>by Marsel Van Oosten</small>';
+							return item.el.attr('title');
 						}
 					}
 				});

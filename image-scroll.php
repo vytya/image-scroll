@@ -121,11 +121,14 @@ if ( ! class_exists( 'Image_Scroll_Plugin' ) ) {
 		 * @since 1.0.0
 		 */
 		public function register_public_assets() {
+
+			// Register scripts
 			wp_register_script( 'imagesloaded', IMAGE_SCROLL_URL . 'public/assets/js/min/imagesloaded.pkgd.min.js', array( 'jquery' ), '4.1.3', true );
 			wp_register_script( 'swiper', IMAGE_SCROLL_URL . 'public/assets/js/min/swiper.jquery.min.js', array( 'jquery', 'imagesloaded' ), '4.0.1', true );
 			wp_register_script( 'magnific-popup', IMAGE_SCROLL_URL . 'public/assets/js/min/jquery.magnific-popup.min.js', array( 'jquery' ), '1.1.0', true );
 			wp_register_script( 'image-scroll-scripts-public', IMAGE_SCROLL_URL . 'public/assets/js/public.js', array( 'jquery', 'swiper', 'magnific-popup', 'imagesloaded' ), IMAGE_SCROLL_VERSION, true );
 
+			// Register styles
 			wp_register_style( 'swiper', IMAGE_SCROLL_URL . 'public/assets/css/swiper.min.css', array(), '3.3.0' );
 			wp_register_style( 'magnific-popup', IMAGE_SCROLL_URL . 'public/assets/css/magnific-popup.min.css', array(), '1.1.0' );
 			wp_register_style( 'image-scroll-public', IMAGE_SCROLL_URL . 'public/assets/css/public.css', array(), IMAGE_SCROLL_VERSION );
