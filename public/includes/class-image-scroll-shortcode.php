@@ -94,11 +94,9 @@ class Image_Scroll_Shortcode {
 	public function do_shortcode( $atts, $content = null, $shortcode = 'imagescroll' ) {
 
 		wp_enqueue_script( 'swiper' );
-		wp_enqueue_script( 'magnific-popup' );
 		wp_enqueue_script( 'image-scroll-scripts-public' );
 
 		wp_enqueue_style( 'swiper' );
-		wp_enqueue_style( 'magnific-popup' );
 		wp_enqueue_style( 'image-scroll-public' );
 
 		wp_localize_script( 'image-scroll-scripts-public', 'imageScrollData', array(
@@ -130,6 +128,11 @@ class Image_Scroll_Shortcode {
 		if ( $atts['imageids'] !== '' ) {
 
 			if ( strpos( $atts['imageids'], ',' ) !== false ) {
+
+				if ( $atts['lightbox'] == 'true' ) {
+					wp_enqueue_script( 'magnific-popup' );
+					wp_enqueue_style( 'magnific-popup' );
+				}
 
 				$images = explode( ',', str_replace( ' ', '', $atts['imageids'] ) );
 				$image  = array();
