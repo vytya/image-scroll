@@ -8,7 +8,7 @@
  * Text Domain: image-scroll
  * Description: Wordpress plugin for making image scrolling blocks
  * Domain Path: /languages
- * License: GPL2
+ * License: GPL3
  */
 
 // If this file is called directly, abort.
@@ -16,7 +16,7 @@ if ( ! defined ( 'WPINC' ) ) {
 	die;
 }
 
-define( 'IMAGE_SCROLL_VERSION', '1.6.5' );
+define( 'IMAGE_SCROLL_VERSION', '1.0.50' );
 define( 'IMAGE_SCROLL__FILE__', __FILE__ );
 define( 'IMAGE_SCROLL_PLUGIN_BASE', plugin_basename( IMAGE_SCROLL__FILE__ ) );
 define( 'IMAGE_SCROLL_URL', plugins_url( '/', IMAGE_SCROLL__FILE__ ) );
