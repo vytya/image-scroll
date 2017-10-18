@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: Image Scroll
- * Plugin URI: https://vytya.com/image-scroll
+ * Plugin URI: https://wordpress.org/plugins/image-scroll/
  * Version: 1.0.0
  * Author: Vytya
  * Author URI: http://vytya.com
